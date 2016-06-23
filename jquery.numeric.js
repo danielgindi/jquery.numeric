@@ -101,25 +101,7 @@
             });
         } else {
             if (this[0].tagName === 'INPUT' && this[0].type === 'number' && 'valueAsNumber' in this[0]) {
-                var value = this[0].valueAsNumber;
-                
-                var min = this[0].getAttribute('min');
-                if (min) {
-                    min = parseFloat(min);
-                    if (value < min) {
-                        value = min;
-                    }
-                }
-                
-                var max = this[0].getAttribute('max');
-                if (max) {
-                    max = parseFloat(max);
-                    if (value > max) {
-                        value = max;
-                    }
-                }
-                
-                return value;
+                return this[0].valueAsNumber;
             } else {
                 var decimal = this.data('numeric.decimal');
                 if (decimal) {
