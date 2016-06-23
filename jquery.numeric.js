@@ -91,12 +91,13 @@
     /** @expose */
     $.fn.valueAsNumber = function () {
         if (!this.length) return null;
-        if (arguments.length) {
+        var args = arguments;
+        if (args.length) {
             this.each(function(){
                 if (this.tagName === 'INPUT' && this.type === 'number' && 'valueAsNumber' in this) {
-                    this.valueAsNumber = arguments[0];
+                    this.valueAsNumber = args[0];
                 } else {
-                    this.value = arguments[0].toString().replace(/\./, this.data('numeric.decimal') || DECIMAL_SEPARATOR);
+                    this.value = args[0].toString().replace(/\./, this.data('numeric.decimal') || DECIMAL_SEPARATOR);
                 }
             });
         } else {
