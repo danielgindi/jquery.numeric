@@ -97,7 +97,7 @@
                 if (this.tagName === 'INPUT' && this.type === 'number' && 'valueAsNumber' in this) {
                     this.valueAsNumber = args[0];
                 } else {
-                    this.value = args[0].toString().replace(/\./, this.data('numeric.decimal') || DECIMAL_SEPARATOR);
+                    this.value = args[0].toString().replace(/\./, $.data(this, 'numeric.decimal') || DECIMAL_SEPARATOR);
                 }
             });
         } else {
