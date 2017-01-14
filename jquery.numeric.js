@@ -9,26 +9,37 @@
     'use strict';
     
     /** @const */
-    var DECIMAL_SEPARATOR = (1.1).toLocaleString().substr(1, 1);
+    var DECIMAL_SEPARATOR = (1.1).toLocaleString().match(/\d(.*?)\d/)[1];
     
     /** @const */
-    var DECIMAL_SEPARATOR_REGEX = new RegExp('\\' + DECIMAL_SEPARATOR, 'g');
+    var DECIMAL_SEPARATOR_REGEX = new RegExp('\\' + regexEscape(DECIMAL_SEPARATOR), 'g');
+    
+    function regexEscape (str) {
+        return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+    }
 
-    var cleanupInput = function (input, decimal, negative) {
+    function cleanupInput (input, decimal, negative) {
         var value = input.value,
             strippedValue = '',
             hasDecimal = false;
+        
         if (input.type !== 'number') {
             var selectionStart = input.selectionStart;
             var selectionEnd = input.selectionEnd;
         }
+        
+        var rgx = new RegExp((negative ? '[-+]?' : '[+]?') + '(?:[0-9]+(?:' +
+                             (decimal ? regexEscape(decimal) : '') + '[0-9]*)?|' +
+                             (decimal ? regexEscape(decimal) : '') + '[0-9]*)', '');
+        
         for (var i = 0, c; i < value.length; i++) {
             c = value.charAt(i);
             if ((c >= '0' && c <= '9') || (negative && c === '-' && !strippedValue.length)) {
                 strippedValue += c;
-            } else if (decimal && c === decimal && !hasDecimal) {
+            } else if (decimal && value.substr(i, decimal.length) === decimal && !hasDecimal) {
                 hasDecimal = true;
-                strippedValue += c;
+                strippedValue += decimal;
+                i += decimal.length - 1;
             } else {
                 if (i <= selectionStart) {
                     selectionStart--
@@ -38,6 +49,7 @@
                 }
             }
         }
+        
         if (value !== strippedValue) {
             input.value = strippedValue;
             if (input.type !== 'number') {
@@ -46,6 +58,7 @@
             }
             return true;
         }
+        
         return false;
     };
 
@@ -64,18 +77,22 @@
                 // If the min attribute does not allow negatives, then disable the negative feature
                 /** @expose */ config.negative = isInput ? (item.getAttribute('min') ? parseFloat(item.getAttribute('min')) < 0 : true) : true;
             }
-            var decimal = (config.decimal === false) ? '' : config.decimal || DECIMAL_SEPARATOR;
+            
+            var decimal = (config.decimal === false) ? '' : (config.decimal || DECIMAL_SEPARATOR);
             var negative = !!config.negative;
             
+            // If we're going to use the real 'valueAsNumber', force using the native decimal separator
+            if (decimal && this.tagName === 'INPUT' && this.type === 'number' && 'valueAsNumber' in this) {
+                decimal = DECIMAL_SEPARATOR;
+            }
+            
+            // If the step attribute does not allow decimals
             if (typeof config.decimal === 'undefined' && isInput) {
-                // If the step attribute does not allow decimals
                 attr = item.getAttribute('step');
-                if (attr && attr !== 'any' && attr.indexOf('.') === -1 && attr.indexOf(',') === -1) {
+                if (attr && attr !== 'any' && attr.indexOf('.') === -1) {
                     decimal = '';
                 }
             }
-
-            // var cleanupRegex = new RegExp('[^' + (negative ? '-' : '') + '0-9' + (decimal ? decimal : '') + ']', 'g');
 
             return $(item)
                     .data('numeric.decimal', decimal)
@@ -106,7 +123,7 @@
             } else {
                 var decimal = this.data('numeric.decimal');
                 if (decimal) {
-                    decimal = new RegExp('\\' + decimal, 'g');
+                    decimal = new RegExp(regexEscape(decimal), 'g');
                 } else {
                     decimal = DECIMAL_SEPARATOR_REGEX;
                 }
