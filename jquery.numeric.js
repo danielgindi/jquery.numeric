@@ -110,7 +110,7 @@
         if (!this.length) return null;
         var args = arguments;
         if (args.length) {
-            this.each(function(){
+            return this.each(function(){
                 if (this.tagName === 'INPUT' && this.type === 'number' && 'valueAsNumber' in this) {
                     this.valueAsNumber = args[0];
                 } else {
