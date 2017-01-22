@@ -78,7 +78,9 @@
                 /** @expose */ config.negative = isInput ? (item.getAttribute('min') ? parseFloat(item.getAttribute('min')) < 0 : true) : true;
             }
             
-            var decimal = (config.decimal === false) ? '' : (config.decimal || DECIMAL_SEPARATOR);
+            var decimal = (config.decimal === false)
+                ? ''
+                : ((typeof config.decimal === 'string' && config.decimal) ? config.decimal : DECIMAL_SEPARATOR);
             var negative = !!config.negative;
             
             // If we're going to use the real 'valueAsNumber', force using the native decimal separator
