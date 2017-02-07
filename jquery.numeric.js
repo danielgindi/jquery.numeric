@@ -2,10 +2,18 @@
 // @compilation_level ADVANCED_OPTIMIZATIONS
 // @externs_url https://raw.githubusercontent.com/google/closure-compiler/master/contrib/externs/jquery-1.9.js
 // ==/ClosureCompiler==
-/** @preserve    Library by Daniel Cohen Gindi (danielgindi@gmail.com)
-    MIT License!
-*/
-(function ($) {
+/** @preserve jquery.numeric
+ * git://github.com/danielgindi/jquery.numeric.git
+ */
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        define('jquery.numeric', ['jquery'], factory);
+    } else if (typeof exports === 'object') {
+        module.exports = factory(require('jquery'));
+    } else {
+        /*root.numeric = */factory(root.jQuery);
+    }
+}(this, function ($) {
     'use strict';
     
     /** @const */
@@ -149,4 +157,4 @@
                .off('.numericValue');
     };
 
-})(jQuery);
+}));
