@@ -1,5 +1,4 @@
 // ==ClosureCompiler==
-// @compilation_level ADVANCED_OPTIMIZATIONS
 // @externs_url https://raw.githubusercontent.com/google/closure-compiler/master/contrib/externs/jquery-1.9.js
 // ==/ClosureCompiler==
 /** @preserve jquery.numeric
