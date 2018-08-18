@@ -24,6 +24,22 @@
     function regexEscape (str) {
         return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
     }
+    
+    // Edge has a bug from 2014:
+    // https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/669685/
+    // So we need to use deep feature detection.
+    var isSupported = (function() {
+        var mem = null;
+        return function () {
+            if (mem === null) {
+                var input = document.createElement('input');
+                input.type = 'number';
+                input.value = '1';
+                mem = input.valueAsNumber === 1;
+            }
+            return mem;
+        };
+    })();
 
     function cleanupInput (input, decimal, negative) {
         var value = input.value,
@@ -91,7 +107,7 @@
             var negative = !!config.negative;
             
             // If we're going to use the real 'valueAsNumber', force using the native decimal separator
-            if (decimal && this.tagName === 'INPUT' && this.type === 'number' && 'valueAsNumber' in this) {
+            if (decimal && this.tagName === 'INPUT' && this.type === 'number' && 'valueAsNumber' in this && isSupported()) {
                 decimal = DECIMAL_SEPARATOR;
             }
             
@@ -120,14 +136,14 @@
         var args = arguments;
         if (args.length) {
             return this.each(function(){
-                if (this.tagName === 'INPUT' && this.type === 'number' && 'valueAsNumber' in this) {
+                if (this.tagName === 'INPUT' && this.type === 'number' && 'valueAsNumber' in this && isSupported()) {
                     this.valueAsNumber = args[0];
                 } else {
                     this.value = args[0].toString().replace(/\./, $.data(this, 'numeric.decimal') || DECIMAL_SEPARATOR);
                 }
             });
         } else {
-            if (this[0].tagName === 'INPUT' && this[0].type === 'number' && 'valueAsNumber' in this[0]) {
+            if (this[0].tagName === 'INPUT' && this[0].type === 'number' && 'valueAsNumber' in this[0] && isSupported()) {
                 return this[0].valueAsNumber;
             } else {
                 var decimal = this.data('numeric.decimal');
