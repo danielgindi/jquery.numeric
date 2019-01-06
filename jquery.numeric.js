@@ -139,7 +139,9 @@
                 if (this.tagName === 'INPUT' && this.type === 'number' && 'valueAsNumber' in this && isSupported()) {
                     this.valueAsNumber = args[0];
                 } else {
-                    this.value = args[0].toString().replace(/\./, $.data(this, 'numeric.decimal') || DECIMAL_SEPARATOR);
+                    this.value = (args[0] === null || args[0] === undefined)
+                        ? ''
+                        : args[0].toString().replace(/\./, $.data(this, 'numeric.decimal') || DECIMAL_SEPARATOR);
                 }
             });
         } else {
