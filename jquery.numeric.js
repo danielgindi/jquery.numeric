@@ -137,7 +137,10 @@
         if (args.length) {
             return this.each(function(){
                 if (this.tagName === 'INPUT' && this.type === 'number' && 'valueAsNumber' in this && isSupported()) {
-                    this.valueAsNumber = args[0];
+                    let val = args[0];
+                    if (val === undefined)
+                        val = null;
+                    this.valueAsNumber = val;
                 } else {
                     this.value = (args[0] === null || args[0] === undefined)
                         ? ''
